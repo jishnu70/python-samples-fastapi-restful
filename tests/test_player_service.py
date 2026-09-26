@@ -27,26 +27,17 @@ def existing_player_request_model():
     """
     Fixture for an existing PlayerRequestModel.
     """
-    existing_player_data = existing_player()
     return PlayerRequestModel(
-        first_name=(
-            existing_player_data.first_name if existing_player_data.first_name else ""
-        ),
-        middle_name=existing_player_data.middle_name,
-        last_name=(
-            existing_player_data.last_name if existing_player_data.last_name else ""
-        ),
-        date_of_birth=existing_player_data.date_of_birth,
-        squad_number=(
-            existing_player_data.squad_number
-            if existing_player_data.squad_number
-            else 0
-        ),
-        position=existing_player_data.position if existing_player_data.position else "",
-        abbr_position=existing_player_data.abbr_position,
-        team=existing_player_data.team,
-        league=existing_player_data.league,
-        starting11=existing_player_data.starting11,
+        first_name="Damián",
+        middle_name="Emiliano",
+        last_name="Martínez",
+        date_of_birth="1992-09-02T00:00:00.000Z",
+        squad_number=23,
+        position="Goalkeeper",
+        abbr_position="GK",
+        team="Aston Villa FC",
+        league="Premier League",
+        starting11=True,
     )
 
 
@@ -55,19 +46,18 @@ def existing_player_schema():
     """
     Fixture for an existing Player schema.
     """
-    existing_player_data = existing_player()
     return Player(
-        id=UUID(existing_player_data.id),
-        first_name=existing_player_data.first_name,
-        middle_name=existing_player_data.middle_name,
-        last_name=existing_player_data.last_name,
-        date_of_birth=existing_player_data.date_of_birth,
-        squad_number=existing_player_data.squad_number,
-        position=existing_player_data.position,
-        abbr_position=existing_player_data.abbr_position,
-        team=existing_player_data.team,
-        league=existing_player_data.league,
-        starting11=existing_player_data.starting11,
+        id=UUID("01772c59-43f0-5d85-b913-c78e4e281452"),
+        first_name="Damián",
+        middle_name="Emiliano",
+        last_name="Martínez",
+        date_of_birth="1992-09-02T00:00:00.000Z",
+        squad_number=23,
+        position="Goalkeeper",
+        abbr_position="GK",
+        team="Aston Villa FC",
+        league="Premier League",
+        starting11=True,
     )
 
 
