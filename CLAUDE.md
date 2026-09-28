@@ -74,7 +74,9 @@ concerns only; business logic belongs in services. Never skip a layer.
 - **Line length**: 88; complexity ≤ 10
 - **Import order**: stdlib → third-party → local
 - **Tests**: integration tests against the real SQLite DB (seeded via
-  Alembic migrations) via `TestClient` — no mocking. Naming pattern
+  Alembic migrations) via `TestClient` — no mocking. Unit tests in
+  `tests/unit/` isolate dependencies with mocks and do not require database
+  migrations. Naming pattern
   `test_request_{method}_{resource}_{context}_response_{outcome}`;
   docstrings single-line, concise; `tests/player_fake.py` for test data;
   `tests/conftest.py` provides a `function`-scoped `client` fixture for
@@ -162,6 +164,8 @@ Never suggest a release tag with a coach name not on this list.
   docstring updates that don't change the API contract)
 - Tests in `tests/` — maintain async patterns, naming convention, and
   integration-test approach (no mocking)
+- Tests in `tests/unit/` — maintain async patterns, naming convention, and
+  unit-test isolation (mock dependencies as needed)
 - Documentation and docstring updates
 - Lint/format fixes
 - Refactoring within existing architectural patterns

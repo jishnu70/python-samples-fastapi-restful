@@ -75,6 +75,7 @@ def player_schema():
 async def test_request_post_player_body_nonexistent_response_created(
     player_request_model, player_schema
 ):
+    """Create a player when the squad number does not already exist."""
     mock_async_session = AsyncMock(spec=AsyncSession)
     response = Response()
 
@@ -116,6 +117,7 @@ async def test_request_post_player_body_nonexistent_response_created(
 async def test_request_post_player_body_existing_response_conflict(
     player_request_model, player_schema
 ):
+    """Reject player creation when the squad number already exists."""
     mock_async_session = AsyncMock(spec=AsyncSession)
     response = Response()
 
@@ -154,6 +156,7 @@ async def test_request_post_player_body_existing_response_conflict(
 async def test_request_post_player_body_service_failure_response_server_error(
     player_request_model,
 ):
+    """Raise a server error when player creation fails."""
     mock_async_session = AsyncMock(spec=AsyncSession)
     response = Response()
 
@@ -193,6 +196,7 @@ async def test_request_post_player_body_service_failure_response_server_error(
 
 @pytest.mark.anyio
 async def test_request_get_players_cache_hit_response_success(player_schema):
+    """Return cached players without querying the service."""
     mock_async_session = AsyncMock(spec=AsyncSession)
     response = Response()
 
@@ -219,6 +223,7 @@ async def test_request_get_players_cache_hit_response_success(player_schema):
 
 @pytest.mark.anyio
 async def test_request_get_players_cache_miss_response_success(player_schema):
+    """Retrieve and cache players when the cache misses."""
     mock_async_session = AsyncMock(spec=AsyncSession)
     response = Response()
 
@@ -250,6 +255,7 @@ async def test_request_get_players_cache_miss_response_success(player_schema):
 
 @pytest.mark.anyio
 async def test_request_get_player_id_existing_response_success(existing_player_schema):
+    """Return a player when the requested ID exists."""
     mock_async_session = AsyncMock(spec=AsyncSession)
 
     with patch(
@@ -271,6 +277,7 @@ async def test_request_get_player_id_existing_response_success(existing_player_s
 
 @pytest.mark.anyio
 async def test_request_get_player_id_unknown_response_not_found():
+    """Raise not found when the requested ID does not exist."""
     mock_async_session = AsyncMock(spec=AsyncSession)
     unknown_player_id = UUID("00000000-0000-0000-0000-000000000000")
 
@@ -294,6 +301,7 @@ async def test_request_get_player_id_unknown_response_not_found():
 async def test_request_get_player_squadnumber_existing_response_success(
     existing_player_schema,
 ):
+    """Return a player when the squad number exists."""
     mock_async_session = AsyncMock(spec=AsyncSession)
 
     with patch(
@@ -315,6 +323,7 @@ async def test_request_get_player_squadnumber_existing_response_success(
 
 @pytest.mark.anyio
 async def test_request_get_player_squadnumber_unknown_response_not_found():
+    """Raise not found when the squad number does not exist."""
     mock_async_session = AsyncMock(spec=AsyncSession)
     unknown_squad_number = 99
 
@@ -340,7 +349,7 @@ async def test_request_get_player_squadnumber_unknown_response_not_found():
 async def test_request_put_player_squadnumber_existing_response_no_content(
     existing_player_schema, player_request_model
 ):
-
+    """Update a player when the squad number matches."""
     player_request_model.squad_number = existing_player_schema.squad_number
     mock_async_session = AsyncMock(spec=AsyncSession)
 
@@ -380,7 +389,7 @@ async def test_request_put_player_squadnumber_existing_response_no_content(
 async def test_request_put_player_squadnumber_mismatch_response_bad_request(
     existing_player_schema, player_request_model
 ):
-
+    """Reject an update when the URL and body squad numbers differ."""
     player_request_model.squad_number = existing_player_schema.squad_number + 1
     mock_async_session = AsyncMock(spec=AsyncSession)
 
@@ -416,6 +425,7 @@ async def test_request_put_player_squadnumber_mismatch_response_bad_request(
 async def test_request_put_player_squadnumber_unknown_response_not_found(
     player_request_model,
 ):
+    """Raise not found when the player does not exist."""
     mock_async_session = AsyncMock(spec=AsyncSession)
 
     with (
@@ -452,7 +462,7 @@ async def test_request_put_player_squadnumber_unknown_response_not_found(
 async def test_request_put_player_squadnumber_service_failure_response_server_error(
     existing_player_schema, player_request_model
 ):
-
+    """Raise a server error when player update fails."""
     player_request_model.squad_number = existing_player_schema.squad_number
     mock_async_session = AsyncMock(spec=AsyncSession)
 
@@ -496,6 +506,7 @@ async def test_request_put_player_squadnumber_service_failure_response_server_er
 async def test_request_delete_player_squadnumber_existing_response_no_content(
     existing_player_schema,
 ):
+    """Delete a player when the squad number exists."""
     mock_async_session = AsyncMock(spec=AsyncSession)
 
     with (
@@ -531,6 +542,7 @@ async def test_request_delete_player_squadnumber_existing_response_no_content(
 
 @pytest.mark.anyio
 async def test_request_delete_player_squadnumber_unknown_response_not_found():
+    """Raise not found when the player does not exist."""
     mock_async_session = AsyncMock(spec=AsyncSession)
     unknown_squad_number = 99
 
@@ -567,6 +579,7 @@ async def test_request_delete_player_squadnumber_unknown_response_not_found():
 async def test_request_delete_player_squadnumber_service_failure_response_server_error(
     existing_player_schema,
 ):
+    """Raise a server error when player deletion fails."""
     mock_async_session = AsyncMock(spec=AsyncSession)
 
     with (

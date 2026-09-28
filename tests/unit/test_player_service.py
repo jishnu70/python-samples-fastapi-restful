@@ -24,9 +24,7 @@ from tests.player_fake import existing_player, nonexistent_player, unknown_playe
 
 @pytest.fixture
 def existing_player_request_model():
-    """
-    Fixture for an existing PlayerRequestModel.
-    """
+    """Fixture for an existing PlayerRequestModel."""
     return PlayerRequestModel(
         first_name="Damián",
         middle_name="Emiliano",
@@ -43,9 +41,7 @@ def existing_player_request_model():
 
 @pytest.fixture
 def existing_player_schema():
-    """
-    Fixture for an existing Player schema.
-    """
+    """Fixture for an existing Player schema."""
     return Player(
         id=UUID("01772c59-43f0-5d85-b913-c78e4e281452"),
         first_name="Damián",
@@ -63,9 +59,7 @@ def existing_player_schema():
 
 @pytest.mark.anyio
 async def test_create_async_success(existing_player_request_model):
-    """
-    Test the successful creation of a Player.
-    """
+    """Test the successful creation of a Player."""
     mock_session = AsyncMock(spec=AsyncSession)
 
     result = await create_async(mock_session, existing_player_request_model)
@@ -78,6 +72,7 @@ async def test_create_async_success(existing_player_request_model):
 
 @pytest.mark.anyio
 async def test_create_async_database_error(existing_player_request_model):
+    """Return None and roll back when player creation raises a database error."""
     mock_session = AsyncMock(spec=AsyncSession)
     mock_session.commit.side_effect = SQLAlchemyError("Connection timeout")
 
@@ -91,9 +86,7 @@ async def test_create_async_database_error(existing_player_request_model):
 
 @pytest.mark.anyio
 async def test_retrieve_all_async():
-    """
-    Test the retrieval of all players.
-    """
+    """Test the retrieval of all players."""
     mock_session = AsyncMock(spec=AsyncSession)
     mock_result = Mock()
     mock_players = [existing_player(), nonexistent_player(), unknown_player()]
@@ -109,9 +102,7 @@ async def test_retrieve_all_async():
 
 @pytest.mark.anyio
 async def test_retrieve_all_async_empty():
-    """
-    Test the retrieval of all players when no players exist.
-    """
+    """Test the retrieval of all players when no players exist."""
     mock_session = AsyncMock(spec=AsyncSession)
     mock_result = Mock()
     mock_result.scalars.return_value.all.return_value = []
@@ -126,9 +117,7 @@ async def test_retrieve_all_async_empty():
 
 @pytest.mark.anyio
 async def test_retrieve_by_id_async(existing_player_schema):
-    """
-    Test the retrieval of a player by ID.
-    """
+    """Test the retrieval of a player by ID."""
     mock_session = AsyncMock(spec=AsyncSession)
 
     mock_session.get.return_value = existing_player_schema
@@ -141,9 +130,7 @@ async def test_retrieve_by_id_async(existing_player_schema):
 
 @pytest.mark.anyio
 async def test_retrieve_by_id_async_not_found():
-    """
-    Test the retrieval of a player by ID when the player does not exist.
-    """
+    """Test the retrieval of a player by ID when the player does not exist."""
     mock_session = AsyncMock(spec=AsyncSession)
     non_existent_id = UUID("00000000-0000-0000-0000-000000000000")
 
@@ -157,9 +144,7 @@ async def test_retrieve_by_id_async_not_found():
 
 @pytest.mark.anyio
 async def test_retrieve_by_squad_number_async(existing_player_schema):
-    """
-    Test the retrieval of a player by Squad Number.
-    """
+    """Test the retrieval of a player by Squad Number."""
     mock_session = AsyncMock(spec=AsyncSession)
     mock_result = Mock()
     mock_result.scalars.return_value.first.return_value = existing_player_schema
@@ -173,13 +158,14 @@ async def test_retrieve_by_squad_number_async(existing_player_schema):
 
     assert result == existing_player_schema
     mock_session.execute.assert_awaited_once()
+    statement = mock_session.execute.await_args.args[0]
+    expected = Player.squad_number == existing_player_schema.squad_number
+    assert statement.whereclause.compare(expected)
 
 
 @pytest.mark.anyio
 async def test_retrieve_by_squad_number_async_not_found():
-    """
-    Test the retrieval of a player by Squad Number when the player does not exist.
-    """
+    """Test the retrieval of a player by Squad Number when the player does not exist."""
     mock_session = AsyncMock(spec=AsyncSession)
     non_existent_squad_number = 99
 
@@ -192,16 +178,18 @@ async def test_retrieve_by_squad_number_async_not_found():
     )
 
     assert result is None
+
     mock_session.execute.assert_awaited_once()
+    statement = mock_session.execute.await_args.args[0]
+    expected = Player.squad_number == non_existent_squad_number
+    assert statement.whereclause.compare(expected)
 
 
 @pytest.mark.anyio
 async def test_update_by_squad_number_async_success(
     existing_player_request_model, existing_player_schema
 ):
-    """
-    Test the successful update of a player by Squad Number.
-    """
+    """Test the successful update of a player by Squad Number."""
     mock_session = AsyncMock(spec=AsyncSession)
 
     existing_player_request_model.first_name = "UpdatedFirstName"
@@ -259,9 +247,7 @@ async def test_update_by_squad_number_async_success(
 async def test_update_by_squad_number_async_not_found(
     existing_player_request_model,
 ):
-    """
-    Test the update of a player by Squad Number when the player does not exist.
-    """
+    """Test the update of a player by Squad Number when the player does not exist."""
     mock_session = AsyncMock(spec=AsyncSession)
     non_existent_squad_number = 99
 
@@ -287,9 +273,7 @@ async def test_update_by_squad_number_async_not_found(
 async def test_update_by_squad_number_async_database_error(
     existing_player_request_model, existing_player_schema
 ):
-    """
-    Test the update of a player by Squad Number when a database error occurs.
-    """
+    """Test the update of a player by Squad Number when a database error occurs."""
     mock_session = AsyncMock(spec=AsyncSession)
 
     with patch(
@@ -315,9 +299,7 @@ async def test_update_by_squad_number_async_database_error(
 
 @pytest.mark.anyio
 async def test_delete_by_squad_number_async_success(existing_player_schema):
-    """
-    Test the successful deletion of a player by Squad Number.
-    """
+    """Test the successful deletion of a player by Squad Number."""
     mock_session = AsyncMock(spec=AsyncSession)
 
     with patch(
@@ -342,9 +324,7 @@ async def test_delete_by_squad_number_async_success(existing_player_schema):
 
 @pytest.mark.anyio
 async def test_delete_by_squad_number_async_not_found():
-    """
-    Test the deletion of a player by Squad Number when the player does not exist.
-    """
+    """Test the deletion of a player by Squad Number when the player does not exist."""
     mock_session = AsyncMock(spec=AsyncSession)
     non_existent_squad_number = 99
 
@@ -367,9 +347,7 @@ async def test_delete_by_squad_number_async_not_found():
 
 @pytest.mark.anyio
 async def test_delete_by_squad_number_async_database_error(existing_player_schema):
-    """
-    Test the deletion of a player by Squad Number when a database error occurs.
-    """
+    """Test the deletion of a player by Squad Number when a database error occurs."""
     mock_session = AsyncMock(spec=AsyncSession)
 
     with patch(
